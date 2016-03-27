@@ -1,8 +1,33 @@
-;(function(window) {
-    var getType = Object.prototype.toString;
+;(function(global, factory) {
+
+    if (typeof define === 'function' && define.amd) {
+        //支持requirejs
+        define([], factory(global,true));
+
+    } else if (typeof module === "object" && typeof module.exports === "object") {
+        //支持node.js
+        module.exports = global.document ?
+            factory(global, true) :
+            function(w) {
+                if (!w.document) {
+                    throw new Error("MangoJS requires a window with a document");
+                }
+                return factory(w);
+            };
+    } else {
+        factory(global);
+    }
+
+
+})(typeof window !== "undefined" ? window : this, function(window, noGlobal) {
+	var version = '1.0.0';
+    var getType = Object.prototype.toString; //获取对象的toString方法
+    var strundefined = typeof undefined;
 
     var Mango = {
-
+    	getVersion : function(){
+    		return version;
+    	},
         //绑定事件
         addHandler: function(element, type, handler) {
             if (element.addEventListener) {
@@ -106,8 +131,35 @@
         //判断是否为空
         isEmpty: function(value, allowBlank) {
             return value === null || value === undefined || (this.isArray(value) && !value.length) || (!allowBlank ? value === '' : false);
+        },
+        //判断是否整型
+        isInteger: function(value) {
+            return Math.floor(value) === value;
+        },
+        //清楚数组重复的元素
+        clearRepeatArray: function(value) {
+            var tempArr = [];
+            if (Mango.isArray(value)) {
+                for (var i = 0, len = value.length; i < len; i++) {
+                    if (tempArr.indexOf(value[i]) < 0) {
+                        tempArr.push(value[i]);
+                    }
+                }
+                return tempArr;
+            }
+            return null;
+        },
+        //去除前后空白符
+        trim: function(value) {
+            if (value && Mango.isString(value)) {
+                return value.replace(/(^\s*)|(\s*)$/g, "");
+            }
         }
     };
 
-    window.mango = window.$ = Mango;
-})(window);
+    if (typeof noGlobal === strundefined) {
+        window.mango = Mango;
+    }
+
+    return Mango;
+});
