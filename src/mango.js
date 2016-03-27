@@ -54,6 +54,10 @@
             }else{
                 return event.keyCode;
             }
+        },
+        //是否存在原型链中
+        hasPrototypeProperty : function(obj,key){
+            return !obj.hasOwnProperty(key) && (key in obj);
         }
     };
 
