@@ -2,17 +2,14 @@
 
     if (typeof define === 'function' && define.amd) {
         //支持requirejs
-        define([], factory(global,true));
+        define([], factory(global, true));
 
     } else if (typeof module === "object" && typeof module.exports === "object") {
         //支持node.js
         module.exports = global.document ?
             factory(global, true) :
             function(w) {
-                if (!w.document) {
-                    throw new Error("MangoJS requires a window with a document");
-                }
-                return factory(w);
+                return factory(w,true);
             };
     } else {
         factory(global);
@@ -20,14 +17,14 @@
 
 
 })(typeof window !== "undefined" ? window : this, function(window, noGlobal) {
-	var version = '1.0.0';
+    var version = '1.0.0';
     var getType = Object.prototype.toString; //获取对象的toString方法
     var strundefined = typeof undefined;
 
     var Mango = {
-    	getVersion : function(){
-    		return version;
-    	},
+        getVersion: function() {
+            return version;
+        },
         //绑定事件
         addHandler: function(element, type, handler) {
             if (element.addEventListener) {
